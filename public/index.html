@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ITPM Due Dates</title>
+  <meta name="description" content="Upcoming assignment due dates for the IT Project Management course." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%237c5cff'/><path d='M18 34l10 10 18-22' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+</head>
+<body>
+  <div class="blobs" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+  </div>
+
+  <header class="hero">
+    <p class="eyebrow">IT Project Management</p>
+    <h1>Assignment <span class="grad">Due Dates</span></h1>
+    <p class="sub">Every deliverable, milestone and deadline in one place.</p>
+
+    <section class="next-up" id="nextUp" hidden>
+      <div class="next-label">Next deadline</div>
+      <div class="next-title" id="nextTitle"></div>
+      <div class="countdown" id="countdown">
+        <div><span id="cdD">0</span><small>days</small></div>
+        <div><span id="cdH">00</span><small>hrs</small></div>
+        <div><span id="cdM">00</span><small>min</small></div>
+        <div><span id="cdS">00</span><small>sec</small></div>
+      </div>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><span id="statTotal">0</span><small>Upcoming</small></div>
+      <div class="stat"><span id="statWeek">0</span><small>This week</small></div>
+      <div class="stat"><span id="statGroup">0</span><small>Group</small></div>
+      <div class="stat"><span id="statSolo">0</span><small>Individual</small></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="chips" role="tablist" aria-label="Filter by type">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="group">Group</button>
+        <button class="chip" data-filter="individual">Individual</button>
+      </div>
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="search" type="search" placeholder="Search assignments…" />
+      </label>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite"></div>
+    <p id="empty" class="empty" hidden>No assignments match. Nice, you're free!</p>
+
+    <details id="pastWrap" class="past" hidden>
+      <summary>Past due <span id="pastCount" class="pill"></span></summary>
+      <div id="pastGrid" class="grid past-grid"></div>
+    </details>
+  </main>
+
+  <footer>
+    <button id="openForm" class="add-btn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      Add an assignment
+    </button>
+    <p class="foot-note">Built for the ITPM crew · stay on schedule, stay in scope.</p>
+  </footer>
+
+  <dialog id="formDialog" class="modal">
+    <form id="addForm" method="dialog" novalidate>
+      <div class="modal-head">
+        <h2>New assignment</h2>
+        <button type="button" class="close" id="closeForm" aria-label="Close">&times;</button>
+      </div>
+
+      <label>Title
+        <input name="title" required maxlength="120" placeholder="e.g. Work Breakdown Structure" />
+      </label>
+
+      <label>Description
+        <textarea name="description" required maxlength="1000" rows="4" placeholder="What needs to be delivered?"></textarea>
+      </label>
+
+      <label>Due date &amp; time
+        <input name="due" type="datetime-local" required />
+      </label>
+
+      <fieldset class="type-pick">
+        <legend>Type</legend>
+        <label class="type-opt"><input type="radio" name="type" value="individual" checked /><span>Individual</span></label>
+        <label class="type-opt"><input type="radio" name="type" value="group" /><span>Group</span></label>
+      </fieldset>
+
+      <label>Password
+        <input name="password" type="password" required autocomplete="off" placeholder="Course password" />
+      </label>
+
+      <p id="formError" class="form-error" role="alert"></p>
+
+      <button type="submit" class="submit" id="submitBtn">Save assignment</button>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <script src="app.js"></script>
+</body>
+</html>

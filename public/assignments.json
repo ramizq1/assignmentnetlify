@@ -1,0 +1,37 @@
+[
+  {
+    "id": "seed-charter",
+    "title": "Project Charter",
+    "description": "Draft a one-page project charter: objectives, scope statement, key stakeholders, high-level milestones and success criteria.",
+    "due": "2026-10-28T23:59:00",
+    "type": "individual"
+  },
+  {
+    "id": "seed-wbs",
+    "title": "Work Breakdown Structure",
+    "description": "As a team, decompose the project scope into a WBS down to work-package level. Include a WBS dictionary for the top 10 work packages.",
+    "due": "2026-11-04T23:59:00",
+    "type": "group"
+  },
+  {
+    "id": "seed-gantt",
+    "title": "Schedule & Gantt Chart",
+    "description": "Build the project schedule with dependencies, durations and resources. Identify the critical path and submit the Gantt chart export.",
+    "due": "2026-11-13T23:59:00",
+    "type": "group"
+  },
+  {
+    "id": "seed-risk",
+    "title": "Risk Register",
+    "description": "Identify at least 12 risks, score probability and impact, and propose a response strategy and owner for each.",
+    "due": "2026-11-20T23:59:00",
+    "type": "individual"
+  },
+  {
+    "id": "seed-final",
+    "title": "Final Project Presentation",
+    "description": "15-minute team presentation covering scope, schedule, budget, risks and lessons learned. Slides due before class.",
+    "due": "2026-12-04T09:00:00",
+    "type": "group"
+  }
+]

@@ -1,167 +1,35 @@
 (() => {
-  const API = "/api/assignments";
-  const SEED = "assignments.json";
-  const DAY = 86400000;
-  const PALETTE = [
-    ["#7c5cff", "#ff4fa3"],
-    ["#19d3c5", "#38bdf8"],
-    ["#ff9f43", "#ff4fa3"],
-    ["#a3e635", "#19d3c5"],
-    ["#38bdf8", "#7c5cff"],
-    ["#ff4fa3", "#ff9f43"],
-  ];
-
-  const $ = (id) => document.getElementById(id);
+  const { API, DAY, $, card, matches, toast, shake } = ITPM;
   const grid = $("grid");
-  const pastGrid = $("pastGrid");
   const dialog = $("formDialog");
   const form = $("addForm");
   const formError = $("formError");
 
   let assignments = [];
-  let filter = "all";
-  let query = "";
   let countdownTimer = null;
 
-  const icons = {
-    group: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.8"/><path d="M16 14.2c3.2.1 5.5 2.3 5.5 5.8"/></svg>',
-    individual: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4.2 3.4-7 7.5-7s7.5 2.8 7.5 7"/></svg>',
-    clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
-  };
-
-  // ---------- Data ----------
   async function load() {
-    const [seed, saved] = await Promise.all([
-      fetchJSON(SEED).catch(() => []),
-      fetchJSON(API).catch(() => []),
-    ]);
-    assignments = [...seed, ...saved]
-      .filter((a) => a && a.title && a.due && !isNaN(new Date(a.due)))
-      .map((a) => ({ ...a, type: a.type === "group" ? "group" : "individual", dueMs: new Date(a.due).getTime() }))
-      .sort((a, b) => a.dueMs - b.dueMs);
+    assignments = await ITPM.load();
     render();
-  }
-
-  async function fetchJSON(url) {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(res.status);
-    return res.json();
   }
 
   // ---------- Rendering ----------
   function render() {
     const now = Date.now();
     const upcoming = assignments.filter((a) => a.dueMs >= now);
-    const past = assignments.filter((a) => a.dueMs < now).reverse();
+    const pastCount = assignments.length - upcoming.length;
 
     $("statTotal").textContent = upcoming.length;
     $("statWeek").textContent = upcoming.filter((a) => a.dueMs - now <= 7 * DAY).length;
     $("statGroup").textContent = upcoming.filter((a) => a.type === "group").length;
     $("statSolo").textContent = upcoming.filter((a) => a.type === "individual").length;
+    $("historyCount").textContent = pastCount;
 
     const visible = upcoming.filter(matches);
     grid.replaceChildren(...visible.map((a, i) => card(a, i, now)));
     $("empty").hidden = visible.length > 0;
 
-    const visiblePast = past.filter(matches);
-    $("pastWrap").hidden = visiblePast.length === 0;
-    $("pastCount").textContent = visiblePast.length;
-    pastGrid.replaceChildren(...visiblePast.map((a, i) => card(a, i, now)));
-
     startCountdown(upcoming[0]);
-  }
-
-  function matches(a) {
-    if (filter !== "all" && a.type !== filter) return false;
-    if (!query) return true;
-    return (a.title + " " + (a.description || "")).toLowerCase().includes(query);
-  }
-
-  function card(a, i, now) {
-    const diff = a.dueMs - now;
-    const days = Math.ceil(diff / DAY);
-    const [c1, c2] = diff >= 0 && diff < 2 * DAY ? ["#ff5470", "#ff9f43"] : PALETTE[i % PALETTE.length];
-    const fill = diff < 0 ? 100 : Math.round(100 - (Math.min(diff, 30 * DAY) / (30 * DAY)) * 100);
-
-    const el = document.createElement("article");
-    el.className = "card";
-    el.tabIndex = 0;
-    el.style.setProperty("--accent", c1);
-    el.style.setProperty("--accent-2", c2);
-    el.style.animationDelay = `${Math.min(i, 12) * 60}ms`;
-
-    el.innerHTML = `
-      <div class="card-top">
-        <span class="badge ${a.type}">${icons[a.type]}${a.type === "group" ? "Group" : "Individual"}</span>
-        <div class="days" style="--p:${fill}">
-          <div><b>${diff < 0 ? "✓" : Math.max(days, 0)}</b><small>${diff < 0 ? "done" : days === 1 ? "day" : "days"}</small></div>
-        </div>
-      </div>
-      <h3></h3>
-      <p class="desc"></p>
-      <div class="card-foot">
-        <span class="when">${icons.clock}<span></span></span>
-        <span class="urgency ${urgencyClass(diff)}">${urgencyLabel(diff)}</span>
-      </div>`;
-    el.querySelector("h3").textContent = a.title;
-    el.querySelector(".desc").textContent = a.description || "";
-    el.querySelector(".when span").textContent = formatDate(a.dueMs);
-
-    const desc = el.querySelector(".desc");
-    requestAnimationFrame(() => {
-      if (desc.scrollHeight > desc.clientHeight + 2) {
-        const more = document.createElement("div");
-        more.className = "more";
-        more.textContent = "Click to read more";
-        el.appendChild(more);
-      }
-    });
-
-    const toggle = () => {
-      el.classList.toggle("open");
-      const more = el.querySelector(".more");
-      if (more) more.textContent = el.classList.contains("open") ? "Click to collapse" : "Click to read more";
-    };
-    el.addEventListener("click", toggle);
-    el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
-    addTilt(el);
-    return el;
-  }
-
-  function urgencyClass(diff) {
-    if (diff < 0) return "u-past";
-    if (diff < 2 * DAY) return "u-hot";
-    if (diff < 7 * DAY) return "u-soon";
-    return "u-ok";
-  }
-
-  function urgencyLabel(diff) {
-    if (diff < 0) return "Past due";
-    const hours = diff / 3600000;
-    if (hours < 1) return "Due within the hour";
-    if (hours < 24) return `Due in ${Math.floor(hours)}h`;
-    const days = Math.ceil(diff / DAY);
-    if (days === 1) return "Due tomorrow";
-    if (days < 7) return `Due in ${days} days`;
-    const weeks = Math.round(days / 7);
-    return `In ${weeks} week${weeks > 1 ? "s" : ""}`;
-  }
-
-  function formatDate(ms) {
-    return new Date(ms).toLocaleString(undefined, {
-      weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-    });
-  }
-
-  function addTilt(el) {
-    if (matchMedia("(hover: none)").matches) return;
-    el.addEventListener("mousemove", (e) => {
-      const r = el.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      el.style.transform = `perspective(800px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateY(-4px)`;
-    });
-    el.addEventListener("mouseleave", () => { el.style.transform = ""; });
   }
 
   // ---------- Countdown ----------
@@ -183,18 +51,10 @@
     countdownTimer = setInterval(tick, 1000);
   }
 
-  // ---------- Filters ----------
-  document.querySelectorAll(".chip").forEach((chip) =>
-    chip.addEventListener("click", () => {
-      document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
-      chip.classList.add("active");
-      filter = chip.dataset.filter;
-      render();
-    })
-  );
-  $("search").addEventListener("input", (e) => { query = e.target.value.trim().toLowerCase(); render(); });
+  ITPM.setupFilters(render);
+  ITPM.onDeleted = load;
 
-  // ---------- Form ----------
+  // ---------- Add form ----------
   $("openForm").addEventListener("click", () => {
     form.reset();
     formError.textContent = "";
@@ -243,20 +103,7 @@
   });
 
   function fail(msg, field) {
-    formError.textContent = msg;
-    form.classList.remove("shake");
-    void form.offsetWidth;
-    form.classList.add("shake");
-    if (field) { field.value = ""; field.focus(); }
-  }
-
-  function toast(msg, isError) {
-    const t = $("toast");
-    t.textContent = msg;
-    t.classList.toggle("error", !!isError);
-    t.classList.add("show");
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.classList.remove("show"), 3200);
+    shake(form, formError, msg, field);
   }
 
   // ---------- Confetti ----------

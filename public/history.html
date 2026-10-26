@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ITPM History</title>
+  <meta name="description" content="Past assignments for the IT Project Management course." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%237c5cff'/><path d='M18 34l10 10 18-22' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+</head>
+<body>
+  <div class="blobs" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+  </div>
+
+  <nav class="tabs" aria-label="Pages">
+    <a href="./" class="tab">Upcoming</a>
+    <a href="history.html" class="tab active" aria-current="page">History</a>
+  </nav>
+
+  <header class="hero">
+    <p class="eyebrow">IT Project Management</p>
+    <h1>Assignment <span class="grad">History</span></h1>
+    <p class="sub">Everything the class has already shipped, newest first.</p>
+
+    <div class="stats">
+      <div class="stat"><span id="statTotal">0</span><small>Completed</small></div>
+      <div class="stat"><span id="statMonth">0</span><small>Last 30 days</small></div>
+      <div class="stat"><span id="statGroup">0</span><small>Group</small></div>
+      <div class="stat"><span id="statSolo">0</span><small>Individual</small></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="chips" role="tablist" aria-label="Filter by type">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="group">Group</button>
+        <button class="chip" data-filter="individual">Individual</button>
+      </div>
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="search" type="search" placeholder="Search history…" />
+      </label>
+    </div>
+
+    <div id="timeline" class="timeline" aria-live="polite"></div>
+    <p id="empty" class="empty" hidden>No past assignments yet. Once a deadline passes, it shows up here.</p>
+  </main>
+
+  <footer>
+    <a href="./" class="add-btn back">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      Back to upcoming
+    </a>
+    <p class="foot-note">Built for the ITPM crew · stay on schedule, stay in scope.</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="common.js"></script>
+  <script src="history.js"></script>
+</body>
+</html>

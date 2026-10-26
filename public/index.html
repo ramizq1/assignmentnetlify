@@ -16,6 +16,11 @@
     <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
   </div>
 
+  <nav class="tabs" aria-label="Pages">
+    <a href="./" class="tab active" aria-current="page">Upcoming</a>
+    <a href="history.html" class="tab">History <span id="historyCount" class="pill">0</span></a>
+  </nav>
+
   <header class="hero">
     <p class="eyebrow">IT Project Management</p>
     <h1>Assignment <span class="grad">Due Dates</span></h1>
@@ -55,11 +60,6 @@
 
     <div id="grid" class="grid" aria-live="polite"></div>
     <p id="empty" class="empty" hidden>No assignments match. Nice, you're free!</p>
-
-    <details id="pastWrap" class="past" hidden>
-      <summary>Past due <span id="pastCount" class="pill"></span></summary>
-      <div id="pastGrid" class="grid past-grid"></div>
-    </details>
   </main>
 
   <footer>
@@ -67,6 +67,7 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
       Add an assignment
     </button>
+    <p class="foot-note"><a href="history.html">See past assignments →</a></p>
     <p class="foot-note">Built for the ITPM crew · stay on schedule, stay in scope.</p>
   </footer>
 
@@ -108,6 +109,7 @@
   <div id="toast" class="toast" role="status"></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
 
+  <script src="common.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

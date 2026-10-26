@@ -4,7 +4,9 @@ Static site (`public/`) plus one Netlify Function (`netlify/functions/assignment
 
 - Starting assignments are in `public/assignments.json`. Edit that file to change them.
 - Assignments added through the **Add an assignment** form are saved by the function and show up for everyone on refresh.
-- The form only saves if the password is `itpm`. The server checks it, not the browser. To change it, set the `ASSIGNMENT_PASSWORD` environment variable in Netlify.
+- Any assignment can be deleted with the trash button on its card. Deleting also needs the password.
+- `history.html` lists assignments whose due date has passed, grouped by month. Deleted ones don't appear there.
+- Adding and deleting only work if the password is `itpm`. The server checks it, not the browser. To change it, set the `ASSIGNMENT_PASSWORD` environment variable in Netlify.
 
 ## Deploy
 
